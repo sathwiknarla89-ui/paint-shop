@@ -1,0 +1,361 @@
+/* Custom variables for Paint Shop Management System Theme */
+:root {
+  --primary-color: #3f51b5;
+  --secondary-color: #f50057;
+  --sidebar-bg: #1e1e2f;
+  --sidebar-hover: #2b2b40;
+  --sidebar-active: #3f51b5;
+  --body-bg: #f8f9fa;
+  --card-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --transition-speed: 0.3s;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--body-bg);
+  color: #333333;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Sidebar Styling */
+.sidebar-wrapper {
+  background-color: var(--sidebar-bg);
+  min-height: 100vh;
+  width: 260px;
+  color: #fff;
+  transition: all var(--transition-speed) ease;
+  z-index: 1000;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-brand {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.sidebar-link i {
+  font-size: 1.2rem;
+  margin-right: 12px;
+  width: 24px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-link:hover {
+  color: #fff;
+  background-color: var(--sidebar-hover);
+  border-left-color: rgba(255, 255, 255, 0.4);
+}
+
+.sidebar-link:hover i {
+  transform: translateX(3px);
+}
+
+.sidebar-link.active {
+  color: #fff;
+  background-color: var(--sidebar-active);
+  border-left-color: var(--secondary-color);
+  font-weight: 600;
+}
+
+/* Main Content Area Layout */
+.main-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.content-wrapper {
+  flex-grow: 1;
+  min-height: 100vh;
+  background-color: var(--body-bg);
+  padding: 2rem;
+  transition: all var(--transition-speed) ease;
+}
+
+/* Top Navbar Style */
+.top-navbar {
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Premium Dashboard Cards */
+.metric-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  transition: transform var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow var(--transition-speed) ease;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary-color);
+}
+
+.metric-card.secondary::before {
+  background: var(--secondary-color);
+}
+
+.metric-card.success::before {
+  background: #198754;
+}
+
+.metric-card.info::before {
+  background: #0dcaf0;
+}
+
+.metric-card.warning::before {
+  background: #ffc107;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.metric-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: transform var(--transition-speed) ease;
+}
+
+.metric-card:hover .metric-icon-box {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Modern Forms */
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(63, 81, 181, 0.15);
+}
+
+.card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 1.25rem 1.5rem;
+  font-weight: 600;
+}
+
+/* Buttons Styling */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #303f9f;
+  border-color: #303f9f;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background-color: #d81b60;
+  border-color: #d81b60;
+}
+
+/* Table Enhancements */
+.table-responsive {
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.table th {
+  background-color: #f1f3f9;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 1rem 1.5rem;
+}
+
+.table td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+}
+
+/* Low Stock Badge Custom Alert */
+.low-stock-alert-row {
+  background-color: rgba(220, 53, 69, 0.05) !important;
+}
+
+/* Login Page Styling */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1e2f 0%, #0c0c14 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  padding: 2.5rem;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+/* Print Styles for Invoices */
+@media print {
+  body {
+    background-color: #fff;
+    color: #000;
+  }
+  .sidebar-wrapper, .top-navbar, .btn, .no-print {
+    display: none !important;
+  }
+  .content-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .table {
+    border-collapse: collapse !important;
+  }
+  .table td, .table th {
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #ddd !important;
+  }
+}
+
+/* Mobile Sidebar Drawer Styling */
+@media (max-width: 991.98px) {
+  .sidebar-container {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    height: 100vh;
+    transition: left var(--transition-speed) ease;
+  }
+  .sidebar-container.show {
+    left: 0;
+  }
+  .sidebar-wrapper {
+    height: 100vh;
+  }
+}
+
+/* Custom Autocomplete Suggestions for Product Search in Billing */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1050;
+  margin-top: 6px;
+  padding: 0.5rem 0;
+}
+
+.suggestion-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f3f9;
+  transition: all 0.2s ease;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f5f6fa;
+}
+
+.suggestion-item.active {
+  background-color: rgba(63, 81, 181, 0.08);
+  border-left: 4px solid var(--primary-color);
+}
+
+/* Custom premium styles */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.card-hover-effect {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06) !important;
+}
