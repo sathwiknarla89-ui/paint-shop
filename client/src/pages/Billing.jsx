@@ -348,29 +348,91 @@ const Billing = () => {
                 <p className="text-muted small">Select items from the left side panel to populate customer invoice.</p>
               </div>
             ) : (
-              <div className="table-responsive border-0 shadow-none mb-4">
-                <table className="table align-middle">
-                  <thead className="table-light">
-                    <tr>
-                      <th style={{ width: '40%' }}>Paint Details</th>
-                      <th style={{ width: '15%' }}>Price</th>
-                      <th style={{ width: '20%' }}>Quantity</th>
-                      <th style={{ width: '15%' }}>Total</th>
-                      <th style={{ width: '10%' }} className="text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cart.map((item) => (
-                      <tr key={item.product}>
-                        <td>
-                          <div className="fw-bold text-dark">{item.name}</div>
-                          <div className="text-muted small">
+              <>
+                {/* Desktop Table View */}
+                <div className="table-responsive border-0 shadow-none mb-4 d-none d-md-block">
+                  <table className="table align-middle">
+                    <thead className="table-light">
+                      <tr>
+                        <th style={{ width: '40%' }}>Paint Details</th>
+                        <th style={{ width: '15%' }}>Price</th>
+                        <th style={{ width: '20%' }}>Quantity</th>
+                        <th style={{ width: '15%' }}>Total</th>
+                        <th style={{ width: '10%' }} className="text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cart.map((item) => (
+                        <tr key={item.product}>
+                          <td>
+                            <div className="fw-bold text-dark">{item.name}</div>
+                            <div className="text-muted small">
+                              {item.brand} • {item.colour} • {item.size}
+                            </div>
+                          </td>
+                          <td>${item.sellingPrice.toFixed(2)}</td>
+                          <td>
+                            <div className="input-group input-group-sm" style={{ maxWidth: '110px' }}>
+                              <input
+                                type="number"
+                                className="form-control text-center"
+                                value={item.quantity}
+                                min="1"
+                                max={item.maxQuantity}
+                                onChange={(e) => handleQtyChange(item.product, e.target.value)}
+                              />
+                              <span className="input-group-text bg-light text-muted small" title="Max stock limit" style={{ fontSize: '0.65rem' }}>
+                                /{item.maxQuantity}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="fw-bold text-success">${(Number(item.total) || 0).toFixed(2)}</td>
+                          <td className="text-center">
+                            <button
+                              onClick={() => handleRemoveItem(item.product)}
+                              className="btn btn-outline-danger btn-sm rounded-circle p-1"
+                              title="Remove Item"
+                              style={{ width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                            >
+                              <i className="bi bi-x-lg" style={{ fontSize: '0.8rem' }}></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="d-block d-md-none mb-4">
+                  {cart.map((item) => (
+                    <div key={item.product} className="mobile-card">
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <div className="mobile-card-title">{item.name}</div>
+                          <div className="mobile-card-subtitle text-muted" style={{ fontSize: '0.8rem' }}>
                             {item.brand} • {item.colour} • {item.size}
                           </div>
-                        </td>
-                        <td>${item.sellingPrice.toFixed(2)}</td>
-                        <td>
-                          <div className="input-group input-group-sm" style={{ maxWidth: '110px' }}>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveItem(item.product)}
+                          className="btn btn-outline-danger btn-sm rounded-circle"
+                          title="Remove Item"
+                          style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <i className="bi bi-x-lg"></i>
+                        </button>
+                      </div>
+
+                      <div className="mobile-card-field">
+                        <span className="mobile-card-label">Price</span>
+                        <span className="mobile-card-value">${item.sellingPrice.toFixed(2)}</span>
+                      </div>
+
+                      <div className="mobile-card-field">
+                        <span className="mobile-card-label">Quantity</span>
+                        <span className="mobile-card-value">
+                          <div className="input-group input-group-sm" style={{ maxWidth: '120px' }}>
                             <input
                               type="number"
                               className="form-control text-center"
@@ -383,23 +445,17 @@ const Billing = () => {
                               /{item.maxQuantity}
                             </span>
                           </div>
-                        </td>
-                        <td className="fw-bold text-success">${(Number(item.total) || 0).toFixed(2)}</td>
-                        <td className="text-center">
-                          <button
-                            onClick={() => handleRemoveItem(item.product)}
-                            className="btn btn-outline-danger btn-sm rounded-circle p-1"
-                            title="Remove Item"
-                            style={{ width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-                          >
-                            <i className="bi bi-x-lg" style={{ fontSize: '0.8rem' }}></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </span>
+                      </div>
+
+                      <div className="mobile-card-field">
+                        <span className="mobile-card-label">Total</span>
+                        <span className="mobile-card-value fw-bold text-success">${(Number(item.total) || 0).toFixed(2)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 

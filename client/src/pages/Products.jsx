@@ -180,7 +180,8 @@ const Products = () => {
         </div>
       ) : (
         <>
-          <div className="table-responsive border-0 shadow-sm rounded-4 mb-4">
+          {/* Desktop Table View */}
+          <div className="table-responsive border-0 shadow-sm rounded-4 mb-4 d-none d-md-block">
             <table className="table table-hover align-middle mb-0 bg-white">
               <thead>
                 <tr>
@@ -310,6 +311,135 @@ const Products = () => {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="d-block d-md-none mb-4">
+            {products.map((product) => {
+              const isLowStock = product.quantity < 10;
+              const isEditing = editingId === product._id;
+
+              return (
+                <div key={product._id} className="mobile-card">
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <div className="mobile-card-title">{product.name}</div>
+                      <div className="mobile-card-subtitle text-muted" style={{ fontSize: '0.8rem' }}>
+                        Brand: <span className="fw-semibold text-dark">{product.brand}</span>
+                      </div>
+                    </div>
+                    <span className="badge bg-light text-dark border px-2.5 py-1 fw-medium text-capitalize" style={{ fontSize: '0.75rem' }}>
+                      {product.category}
+                    </span>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Colour</span>
+                    <span className="mobile-card-value">
+                      <div className="d-flex align-items-center gap-1.5">
+                        <span
+                          className="d-inline-block rounded-circle border border-secondary"
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            backgroundColor: product.colour.toLowerCase().replace(/\s/g, ''),
+                          }}
+                        ></span>
+                        <span className="text-capitalize">{product.colour}</span>
+                      </div>
+                    </span>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Size</span>
+                    <span className="mobile-card-value text-muted fw-bold">{product.size}</span>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Buying / Selling</span>
+                    <span className="mobile-card-value">
+                      <span className="text-muted small">Buy:</span> <strong className="text-dark me-2">${product.buyingPrice.toFixed(2)}</strong>
+                      <span className="text-muted small">Sell:</span> <strong className="text-success">${product.sellingPrice.toFixed(2)}</strong>
+                    </span>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Stock Quantity</span>
+                    <span className="mobile-card-value">
+                      {isEditing ? (
+                        <div className="input-group input-group-sm" style={{ width: '130px' }}>
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={editQty}
+                            min="0"
+                            onChange={(e) => setEditQty(e.target.value)}
+                            autoFocus
+                            onKeyDown={(e) => e.key === 'Enter' && saveQtyUpdate(product._id)}
+                          />
+                          <button
+                            className="btn btn-success"
+                            type="button"
+                            onClick={() => saveQtyUpdate(product._id)}
+                            title="Save"
+                          >
+                            <i className="bi bi-check-lg"></i>
+                          </button>
+                          <button
+                            className="btn btn-outline-secondary"
+                            type="button"
+                            onClick={() => setEditingId(null)}
+                            title="Cancel"
+                          >
+                            <i className="bi bi-x-lg"></i>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="d-flex align-items-center gap-2">
+                          <span className={`badge ${isLowStock ? (product.quantity === 0 ? 'bg-danger' : 'bg-warning') : 'bg-success'} text-dark fw-bold rounded-pill px-3 py-1.5`}>
+                            {product.quantity} units
+                          </span>
+                          <button
+                            className="btn btn-link btn-sm text-primary p-0"
+                            onClick={() => startEditQty(product)}
+                            title="Quick Update Quantity"
+                          >
+                            <i className="bi bi-pencil-square fs-5"></i>
+                          </button>
+                        </div>
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Supplier</span>
+                    <span className="mobile-card-value small">{product.supplier || 'N/A'}</span>
+                  </div>
+
+                  {isLowStock && (
+                    <div className="text-danger small fw-bold mt-2" style={{ fontSize: '0.75rem' }}>
+                      <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                      {product.quantity === 0 ? 'Out of Stock' : 'Low Stock Alert'}
+                    </div>
+                  )}
+
+                  <div className="mobile-card-actions">
+                    <Link
+                      to={`/products/edit/${product._id}`}
+                      className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
+                    >
+                      <i className="bi bi-pencil"></i> Edit Details
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteClick(product)}
+                      className="btn btn-outline-danger btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
+                    >
+                      <i className="bi bi-trash"></i> Delete
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Pagination Controls */}

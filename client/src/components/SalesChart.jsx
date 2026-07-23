@@ -31,15 +31,13 @@ const SalesChart = ({ data = [] }) => {
   const chartHeight = svgHeight - paddingTop - paddingBottom;
 
   return (
-    <div className="w-100 position-relative">
-      <div className="table-responsive border-0 shadow-none bg-transparent">
-        <svg
-          viewBox={`0 0 600 ${svgHeight}`}
-          width="100%"
-          height="100%"
-          className="overflow-visible"
-          style={{ minWidth: '450px' }}
-        >
+    <div className="w-100 position-relative" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <svg
+        viewBox={`0 0 600 ${svgHeight}`}
+        width="100%"
+        height="100%"
+        className="overflow-visible"
+      >
           <defs>
             {/* Vibrant gradient fill for the bars */}
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -151,7 +149,6 @@ const SalesChart = ({ data = [] }) => {
             strokeWidth="1.5"
           />
         </svg>
-      </div>
     </div>
   );
 };

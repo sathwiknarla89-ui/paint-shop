@@ -133,86 +133,157 @@ const SalesHistory = () => {
           </div>
         </div>
       ) : (
-        <div className="table-responsive border-0 shadow-sm rounded-4">
-          <table className="table table-hover align-middle mb-0 bg-white">
-            <thead>
-              <tr>
-                <th>Date & Time</th>
-                <th>Invoice Number</th>
-                <th>Customer Name</th>
-                <th>Cart Volume</th>
-                <th>Grand Total</th>
-                <th className="text-end">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            {/* Desktop Table View */}
+            <div className="table-responsive border-0 shadow-sm rounded-4 d-none d-md-block">
+              <table className="table table-hover align-middle mb-0 bg-white">
+                <thead>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>Invoice Number</th>
+                    <th>Customer Name</th>
+                    <th>Cart Volume</th>
+                    <th>Grand Total</th>
+                    <th className="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoices.map((invoice) => (
+                    <tr key={invoice._id}>
+                      <td>
+                        <div className="fw-bold text-dark">
+                          {new Date(invoice.date).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </div>
+                        <div className="text-muted small" style={{ fontSize: '0.75rem' }}>
+                          {new Date(invoice.date).toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
+                      </td>
+                      <td>
+                        <Link to={`/invoices/${invoice._id}`} className="fw-bold text-primary text-decoration-none">
+                          {invoice.invoiceNumber}
+                        </Link>
+                      </td>
+                      <td>
+                        <div className="fw-medium text-dark">{invoice.customerName}</div>
+                        {invoice.customerPhone && (
+                          <div className="text-muted small" style={{ fontSize: '0.75rem' }}>
+                            <i className="bi bi-telephone-fill me-1"></i>
+                            {invoice.customerPhone}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <span className="badge bg-light text-dark border px-2.5 py-1.5 fw-medium">
+                          {invoice.products?.reduce((sum, p) => sum + p.quantity, 0)} Items
+                        </span>
+                      </td>
+                      <td>
+                        <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
+                          ${invoice.grandTotal.toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="text-end">
+                        <div className="d-flex justify-content-end gap-2">
+                          <Link
+                            to={`/invoices/${invoice._id}`}
+                            className="btn btn-outline-secondary btn-sm rounded-circle p-2"
+                            title="View Full Invoice details"
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            <i className="bi bi-eye"></i>
+                          </Link>
+                          <button
+                            onClick={() => handleDeleteClick(invoice)}
+                            className="btn btn-outline-danger btn-sm rounded-circle p-2"
+                            title="Delete and Revert Invoice"
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="d-block d-md-none mb-3">
               {invoices.map((invoice) => (
-                <tr key={invoice._id}>
-                  <td>
-                    <div className="fw-bold text-dark">
+                <div key={invoice._id} className="mobile-card">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <Link to={`/invoices/${invoice._id}`} className="fw-bold text-primary text-decoration-none">
+                      {invoice.invoiceNumber}
+                    </Link>
+                    <span className="small text-muted">
                       {new Date(invoice.date).toLocaleDateString(undefined, {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
                       })}
+                    </span>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Customer</span>
+                    <span className="mobile-card-value text-dark fw-semibold">
+                      {invoice.customerName}
+                    </span>
+                  </div>
+
+                  {invoice.customerPhone && (
+                    <div className="mobile-card-field">
+                      <span className="mobile-card-label">Phone</span>
+                      <span className="mobile-card-value">
+                        <a href={`tel:${invoice.customerPhone}`} className="fw-medium text-secondary text-decoration-none">
+                          <i className="bi bi-telephone-fill me-1 small"></i>
+                          {invoice.customerPhone}
+                        </a>
+                      </span>
                     </div>
-                    <div className="text-muted small" style={{ fontSize: '0.75rem' }}>
-                      {new Date(invoice.date).toLocaleTimeString(undefined, {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </div>
-                  </td>
-                  <td>
-                    <Link to={`/invoices/${invoice._id}`} className="fw-bold text-primary text-decoration-none">
-                      {invoice.invoiceNumber}
-                    </Link>
-                  </td>
-                  <td>
-                    <div className="fw-medium text-dark">{invoice.customerName}</div>
-                    {invoice.customerPhone && (
-                      <div className="text-muted small" style={{ fontSize: '0.75rem' }}>
-                        <i className="bi bi-telephone-fill me-1"></i>
-                        {invoice.customerPhone}
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <span className="badge bg-light text-dark border px-2.5 py-1.5 fw-medium">
+                  )}
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Cart Items</span>
+                    <span className="mobile-card-value badge bg-light text-dark border fw-medium" style={{ fontSize: '0.75rem' }}>
                       {invoice.products?.reduce((sum, p) => sum + p.quantity, 0)} Items
                     </span>
-                  </td>
-                  <td>
-                    <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
+                  </div>
+
+                  <div className="mobile-card-field">
+                    <span className="mobile-card-label">Grand Total</span>
+                    <span className="mobile-card-value text-success fw-bold">
                       ${invoice.grandTotal.toFixed(2)}
                     </span>
-                  </td>
-                  <td className="text-end">
-                    <div className="d-flex justify-content-end gap-2">
-                      <Link
-                        to={`/invoices/${invoice._id}`}
-                        className="btn btn-outline-secondary btn-sm rounded-circle p-2"
-                        title="View Full Invoice details"
-                        style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <i className="bi bi-eye"></i>
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteClick(invoice)}
-                        className="btn btn-outline-danger btn-sm rounded-circle p-2"
-                        title="Delete and Revert Invoice"
-                        style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                  </div>
+
+                  <div className="mobile-card-actions">
+                    <Link
+                      to={`/invoices/${invoice._id}`}
+                      className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
+                    >
+                      <i className="bi bi-eye"></i> View Details
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteClick(invoice)}
+                      className="btn btn-outline-danger btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
+                    >
+                      <i className="bi bi-trash"></i> Revert & Delete
+                    </button>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            </div>
+          </>
+        )}
 
       {/* Delete and Revert invoice confirmation modal */}
       <ConfirmModal

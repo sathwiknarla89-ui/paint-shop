@@ -64,7 +64,7 @@ const AppLayout = () => {
           zIndex: 999,
         }}
       >
-        <Sidebar />
+        <Sidebar closeSidebar={() => setMobileSidebarOpen(false)} />
       </div>
 
       {/* Primary Page Panel */}

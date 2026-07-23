@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const Sidebar = () => {
+const Sidebar = ({ closeSidebar }) => {
   const { logout, user } = useContext(AuthContext);
 
   return (
@@ -17,31 +17,31 @@ const Sidebar = () => {
 
       <ul className="sidebar-menu flex-grow-1">
         <li>
-          <NavLink to="/" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} end>
+          <NavLink to="/" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} onClick={closeSidebar} end>
             <i className="bi bi-speedometer2"></i>
             <span>Dashboard</span>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/products" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          <NavLink to="/products" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} onClick={closeSidebar}>
             <i className="bi bi-paint-bucket"></i>
             <span>Stock Management</span>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/billing" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          <NavLink to="/billing" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} onClick={closeSidebar}>
             <i className="bi bi-receipt-cutoff"></i>
             <span>Billing</span>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/customers" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          <NavLink to="/customers" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} onClick={closeSidebar}>
             <i className="bi bi-people-fill"></i>
             <span>Customers</span>
           </NavLink>
         </li>
         <li>
-          <NavLink to="/sales" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          <NavLink to="/sales" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} onClick={closeSidebar}>
             <i className="bi bi-bar-chart-line-fill"></i>
             <span>Sales History</span>
           </NavLink>

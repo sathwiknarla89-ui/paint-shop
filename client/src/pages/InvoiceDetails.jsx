@@ -47,34 +47,34 @@ const InvoiceDetails = () => {
   return (
     <div>
       {/* Control Buttons (no-print) */}
-      <div className="d-flex justify-content-between align-items-center mb-4 no-print">
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 no-print">
         <div className="d-flex align-items-center">
           <Link to="/sales" className="btn btn-light rounded-circle p-2 me-3 shadow-sm" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <i className="bi bi-arrow-left"></i>
           </Link>
           <h4 className="fw-bold mb-0 text-dark">Invoice Details</h4>
         </div>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 w-100 w-sm-auto justify-content-end">
           <button
             onClick={handlePrint}
-            className="btn btn-primary rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2"
+            className="btn btn-primary rounded-pill px-3 px-sm-4 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 flex-grow-1 flex-sm-grow-0"
           >
             <i className="bi bi-printer"></i>
             Print Receipt
           </button>
           <button
             onClick={handlePrint}
-            className="btn btn-outline-dark rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2"
+            className="btn btn-outline-dark rounded-pill px-3 px-sm-4 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 flex-grow-1 flex-sm-grow-0"
             title="Saves invoice as PDF using browser printing dialog"
           >
             <i className="bi bi-file-earmark-pdf"></i>
-            Save as PDF
+            Save PDF
           </button>
         </div>
       </div>
 
       {/* Professional Invoice Template */}
-      <div className="card border-0 shadow p-4 p-md-5 bg-white mx-auto" style={{ borderRadius: '20px', maxWidth: '850px' }}>
+      <div className="card border-0 shadow p-3 p-sm-4 p-md-5 bg-white mx-auto" style={{ borderRadius: '20px', maxWidth: '850px' }}>
         {/* Invoice Header */}
         <div className="row g-4 justify-content-between align-items-start border-bottom pb-4 mb-4">
           <div className="col-12 col-md-6">
@@ -117,8 +117,8 @@ const InvoiceDetails = () => {
           </div>
         </div>
 
-        {/* Products Table */}
-        <div className="table-responsive border-0 shadow-none mb-4" style={{ borderRadius: '0' }}>
+        {/* Products Table (Desktop) */}
+        <div className="table-responsive border-0 shadow-none mb-4 d-none d-md-block" style={{ borderRadius: '0' }}>
           <table className="table align-middle">
             <thead className="table-light">
               <tr>
@@ -144,6 +144,29 @@ const InvoiceDetails = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Products List (Mobile) */}
+        <div className="d-block d-md-none mb-4">
+          <h6 className="text-uppercase text-muted small fw-bold mb-3 border-bottom pb-2">Purchased Items</h6>
+          {invoice.products?.map((item) => (
+            <div key={item._id} className="py-2.5 border-bottom border-light">
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="fw-bold text-dark" style={{ fontSize: '0.95rem' }}>{item.name}</div>
+                  <div className="text-muted small">
+                    {item.brand} | Colour: {item.colour}
+                  </div>
+                  <div className="small text-secondary mt-1">
+                    Qty: <strong className="text-dark">{item.quantity}</strong> @ ${item.sellingPrice.toFixed(2)} ({item.size})
+                  </div>
+                </div>
+                <div className="text-end fw-bold text-dark mt-1" style={{ fontSize: '0.95rem' }}>
+                  ${item.total.toFixed(2)}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Totals Breakdown */}

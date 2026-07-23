@@ -70,72 +70,136 @@ const Customers = () => {
           </div>
         </div>
       ) : (
-        <div className="table-responsive border-0 shadow-sm rounded-4">
-          <table className="table table-hover align-middle mb-0 bg-white">
-            <thead>
-              <tr>
-                <th>Customer Name</th>
-                <th>Phone Number</th>
-                <th>Invoices Settled</th>
-                <th>Lifetime Purchases</th>
-                <th>Last Purchase Date</th>
-                <th className="text-end">Ledger Account</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.map((cust) => (
-                <tr key={cust._id}>
-                  <td>
-                    <div className="fw-bold text-dark">{cust.name}</div>
-                  </td>
-                  <td>
+        <>
+          {/* Desktop Table View */}
+          <div className="table-responsive border-0 shadow-sm rounded-4 d-none d-md-block">
+            <table className="table table-hover align-middle mb-0 bg-white">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Phone Number</th>
+                  <th>Invoices Settled</th>
+                  <th>Lifetime Purchases</th>
+                  <th>Last Purchase Date</th>
+                  <th className="text-end">Ledger Account</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customers.map((cust) => (
+                  <tr key={cust._id}>
+                    <td>
+                      <div className="fw-bold text-dark">{cust.name}</div>
+                    </td>
+                    <td>
+                      {cust.phone ? (
+                        <span className="fw-medium text-secondary">
+                          <i className="bi bi-telephone-fill me-1 small"></i>
+                          {cust.phone}
+                        </span>
+                      ) : (
+                        <span className="text-muted small">N/A</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className="badge bg-light text-primary border px-2.5 py-1.5 fw-semibold">
+                        <i className="bi bi-file-earmark-text me-1"></i>
+                        {cust.bills?.length || 0} Bills
+                      </span>
+                    </td>
+                    <td>
+                      <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
+                        ${(cust.totalPurchases || 0).toFixed(2)}
+                      </span>
+                    </td>
+                    <td>
+                      {cust.lastPurchaseDate ? (
+                        <div className="small fw-medium text-dark">
+                          {new Date(cust.lastPurchaseDate).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </div>
+                      ) : (
+                        <span className="text-muted small">No purchases recorded</span>
+                      )}
+                    </td>
+                    <td className="text-end">
+                      <Link
+                        to={`/customers/${cust._id}`}
+                        className="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium"
+                      >
+                        <i className="bi bi-folder2-open me-1"></i>
+                        View Bills
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="d-block d-md-none mb-3">
+            {customers.map((cust) => (
+              <div key={cust._id} className="mobile-card">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <div className="mobile-card-title">{cust.name}</div>
+                  <span className="badge bg-light text-primary border px-2.5 py-1 fw-semibold" style={{ fontSize: '0.75rem' }}>
+                    <i className="bi bi-file-earmark-text me-1"></i>
+                    {cust.bills?.length || 0} Bills
+                  </span>
+                </div>
+
+                <div className="mobile-card-field">
+                  <span className="mobile-card-label">Phone</span>
+                  <span className="mobile-card-value">
                     {cust.phone ? (
-                      <span className="fw-medium text-secondary">
+                      <a href={`tel:${cust.phone}`} className="fw-medium text-secondary text-decoration-none">
                         <i className="bi bi-telephone-fill me-1 small"></i>
                         {cust.phone}
-                      </span>
+                      </a>
                     ) : (
                       <span className="text-muted small">N/A</span>
                     )}
-                  </td>
-                  <td>
-                    <span className="badge bg-light text-primary border px-2.5 py-1.5 fw-semibold">
-                      <i className="bi bi-file-earmark-text me-1"></i>
-                      {cust.bills?.length || 0} Bills
-                    </span>
-                  </td>
-                  <td>
-                    <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
-                      ${(cust.totalPurchases || 0).toFixed(2)}
-                    </span>
-                  </td>
-                  <td>
+                  </span>
+                </div>
+
+                <div className="mobile-card-field">
+                  <span className="mobile-card-label">Lifetime Purchases</span>
+                  <span className="mobile-card-value text-success fw-bold">
+                    ${(cust.totalPurchases || 0).toFixed(2)}
+                  </span>
+                </div>
+
+                <div className="mobile-card-field">
+                  <span className="mobile-card-label">Last Purchase</span>
+                  <span className="mobile-card-value text-muted small">
                     {cust.lastPurchaseDate ? (
-                      <div className="small fw-medium text-dark">
-                        {new Date(cust.lastPurchaseDate).toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </div>
+                      new Date(cust.lastPurchaseDate).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })
                     ) : (
-                      <span className="text-muted small">No purchases recorded</span>
+                      <span>No purchases</span>
                     )}
-                  </td>
-                  <td className="text-end">
-                    <Link
-                      to={`/customers/${cust._id}`}
-                      className="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium"
-                    >
-                      <i className="bi bi-folder2-open me-1"></i>
-                      View Bills
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </span>
+                </div>
+
+                <div className="mobile-card-actions">
+                  <Link
+                    to={`/customers/${cust._id}`}
+                    className="btn btn-outline-primary btn-sm rounded-pill px-4 py-2 fw-medium w-100 text-center d-block"
+                  >
+                    <i className="bi bi-folder2-open me-1"></i>
+                    View Bills & Ledger
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
