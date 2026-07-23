@@ -108,7 +108,7 @@ const Customers = () => {
                     </td>
                     <td>
                       <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
-                        ${(cust.totalPurchases || 0).toFixed(2)}
+                        ₹{(cust.totalPurchases || 0).toFixed(2)}
                       </span>
                     </td>
                     <td>
@@ -168,7 +168,7 @@ const Customers = () => {
                 <div className="mobile-card-field">
                   <span className="mobile-card-label">Lifetime Purchases</span>
                   <span className="mobile-card-value text-success fw-bold">
-                    ${(cust.totalPurchases || 0).toFixed(2)}
+                    ₹{(cust.totalPurchases || 0).toFixed(2)}
                   </span>
                 </div>
 

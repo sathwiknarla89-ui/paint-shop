@@ -74,7 +74,7 @@ const CustomerDetails = () => {
             <div className="d-flex flex-column gap-3">
               <div className="d-flex justify-content-between align-items-center border-bottom pb-2">
                 <span className="text-muted small fw-medium">Lifetime Revenue:</span>
-                <span className="fw-bold text-success fs-5">${customer.totalPurchases.toFixed(2)}</span>
+                <span className="fw-bold text-success fs-5">₹{customer.totalPurchases.toFixed(2)}</span>
               </div>
               <div className="d-flex justify-content-between align-items-center border-bottom pb-2">
                 <span className="text-muted small fw-medium">Total Invoices Settled:</span>
@@ -159,11 +159,11 @@ const CustomerDetails = () => {
                           </span>
                         </div>
                       </td>
-                      <td>${bill.subtotal?.toFixed(2)}</td>
+                      <td>₹{bill.subtotal?.toFixed(2)}</td>
                       <td>
-                        <span className="text-muted small">${bill.gstAmount?.toFixed(2)} ({bill.gstPercent}%)</span>
+                        <span className="text-muted small">₹{bill.gstAmount?.toFixed(2)} ({bill.gstPercent}%)</span>
                       </td>
-                      <td className="fw-bold text-success">${bill.grandTotal?.toFixed(2)}</td>
+                      <td className="fw-bold text-success">₹{bill.grandTotal?.toFixed(2)}</td>
                       <td className="text-end">
                         <Link to={`/invoices/${bill._id}`} className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-medium">
                           <i className="bi bi-eye-fill me-1"></i>
@@ -202,17 +202,17 @@ const CustomerDetails = () => {
 
                   <div className="mobile-card-field">
                     <span className="mobile-card-label">Subtotal</span>
-                    <span className="mobile-card-value">${bill.subtotal?.toFixed(2)}</span>
+                    <span className="mobile-card-value">₹{bill.subtotal?.toFixed(2)}</span>
                   </div>
 
                   <div className="mobile-card-field">
                     <span className="mobile-card-label">GST ({bill.gstPercent}%)</span>
-                    <span className="mobile-card-value text-muted">${bill.gstAmount?.toFixed(2)}</span>
+                    <span className="mobile-card-value text-muted">₹{bill.gstAmount?.toFixed(2)}</span>
                   </div>
 
                   <div className="mobile-card-field">
                     <span className="mobile-card-label">Grand Total</span>
-                    <span className="mobile-card-value text-success fw-bold">${bill.grandTotal?.toFixed(2)}</span>
+                    <span className="mobile-card-value text-success fw-bold">₹{bill.grandTotal?.toFixed(2)}</span>
                   </div>
 
                   <div className="mobile-card-actions">

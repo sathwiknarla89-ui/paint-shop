@@ -186,7 +186,7 @@ const SalesHistory = () => {
                       </td>
                       <td>
                         <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
-                          ${invoice.grandTotal.toFixed(2)}
+                          ₹{invoice.grandTotal.toFixed(2)}
                         </span>
                       </td>
                       <td className="text-end">
@@ -198,6 +198,14 @@ const SalesHistory = () => {
                             style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           >
                             <i className="bi bi-eye"></i>
+                          </Link>
+                          <Link
+                            to={`/billing/edit/${invoice._id}`}
+                            className="btn btn-outline-warning btn-sm rounded-circle p-2"
+                            title="Edit Invoice"
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            <i className="bi bi-pencil-square text-dark"></i>
                           </Link>
                           <button
                             onClick={() => handleDeleteClick(invoice)}
@@ -261,7 +269,7 @@ const SalesHistory = () => {
                   <div className="mobile-card-field">
                     <span className="mobile-card-label">Grand Total</span>
                     <span className="mobile-card-value text-success fw-bold">
-                      ${invoice.grandTotal.toFixed(2)}
+                      ₹{invoice.grandTotal.toFixed(2)}
                     </span>
                   </div>
 
@@ -271,6 +279,12 @@ const SalesHistory = () => {
                       className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
                     >
                       <i className="bi bi-eye"></i> View Details
+                    </Link>
+                    <Link
+                      to={`/billing/edit/${invoice._id}`}
+                      className="btn btn-outline-warning btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-1 text-dark"
+                    >
+                      <i className="bi bi-pencil-square"></i> Edit
                     </Link>
                     <button
                       onClick={() => handleDeleteClick(invoice)}

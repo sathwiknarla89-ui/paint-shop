@@ -96,11 +96,11 @@ const Dashboard = () => {
             <div className="d-flex align-items-center justify-content-between">
               <div>
                 <span className="text-muted fw-semibold small text-uppercase">Today's Revenue</span>
-                <h3 className="mb-0 fw-bold mt-1 text-success">${todaySales.toFixed(2)}</h3>
+                <h3 className="mb-0 fw-bold mt-1 text-success">₹{todaySales.toFixed(2)}</h3>
                 <small className="text-muted">Direct Counter Sales</small>
               </div>
               <div className="metric-icon-box bg-success bg-opacity-10 text-success">
-                <i className="bi bi-currency-dollar"></i>
+                <i className="bi bi-currency-rupee"></i>
               </div>
             </div>
           </div>

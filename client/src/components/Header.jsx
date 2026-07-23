@@ -13,6 +13,7 @@ const Header = ({ toggleSidebar }) => {
     if (path.startsWith('/products/add')) return 'Add Paint Product';
     if (path.startsWith('/products/edit')) return 'Edit Paint Product';
     if (path.startsWith('/products')) return 'Paint Stock Management';
+    if (path.startsWith('/billing/edit')) return 'Edit Invoice Details';
     if (path.startsWith('/billing')) return 'Invoice Billing Desk';
     if (path.startsWith('/customers/')) return 'Customer Transaction Details';
     if (path.startsWith('/customers')) return 'Customer Transaction Directory';

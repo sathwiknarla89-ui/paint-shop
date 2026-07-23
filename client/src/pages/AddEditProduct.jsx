@@ -294,7 +294,7 @@ const AddEditProduct = () => {
 
             {/* Buying Price */}
             <div className="col-6 col-md-4">
-              <label htmlFor="buyingPrice" className="form-label fw-semibold small text-muted">Buying Price ($)*</label>
+              <label htmlFor="buyingPrice" className="form-label fw-semibold small text-muted">Buying Price (₹)*</label>
               <input
                 type="number"
                 step="0.01"
@@ -311,7 +311,7 @@ const AddEditProduct = () => {
 
             {/* Selling Price */}
             <div className="col-6 col-md-4">
-              <label htmlFor="sellingPrice" className="form-label fw-semibold small text-muted">Selling Price ($)*</label>
+              <label htmlFor="sellingPrice" className="form-label fw-semibold small text-muted">Selling Price (₹)*</label>
               <input
                 type="number"
                 step="0.01"

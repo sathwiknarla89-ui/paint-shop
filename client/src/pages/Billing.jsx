@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
 
 const Billing = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = !!id;
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [availableProducts, setAvailableProducts] = useState([]);
+  const [invoiceNumber, setInvoiceNumber] = useState('');
   
   // Billing form state
   const [customerName, setCustomerName] = useState('');
@@ -21,27 +24,56 @@ const Billing = () => {
   const [cart, setCart] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  // Load in-stock products
+  // Load products and prefill invoice details if in edit mode
   useEffect(() => {
-    const fetchAvailableProducts = async () => {
+    const initBilling = async () => {
+      setLoadingProducts(true);
       try {
         // Load products without pagination to show in dropdown
-        const response = await axios.get('/api/products', {
+        const prodResponse = await axios.get('/api/products', {
           params: { page: 1, limit: 100 }, // Fetch up to 100 items for selection
         });
+        const allProducts = prodResponse.data.products;
+        
         // Filter products that have at least 1 item in stock
-        const inStockItems = response.data.products.filter((p) => p.quantity > 0);
+        const inStockItems = allProducts.filter((p) => p.quantity > 0);
         setAvailableProducts(inStockItems);
+
+        if (isEditMode) {
+          const invResponse = await axios.get(`/api/invoices/${id}`);
+          const inv = invResponse.data;
+          setCustomerName(inv.customerName);
+          setCustomerPhone(inv.customerPhone || '');
+          setGstPercent(inv.gstPercent.toString());
+          setInvoiceNumber(inv.invoiceNumber);
+
+          const mappedCart = inv.products.map((item) => {
+            const dbProduct = allProducts.find((p) => p._id === item.product);
+            const currentDbQty = dbProduct ? dbProduct.quantity : 0;
+            return {
+              product: item.product,
+              name: item.name,
+              brand: item.brand,
+              colour: item.colour,
+              size: item.size,
+              sellingPrice: item.sellingPrice,
+              maxQuantity: currentDbQty + item.quantity,
+              quantity: item.quantity,
+              total: item.total,
+            };
+          });
+          setCart(mappedCart);
+        }
       } catch (err) {
-        console.error('Error fetching available products:', err);
-        toast.error('Failed to load product selection registry');
+        console.error('Billing setup failed:', err);
+        toast.error('Failed to initialize billing screen');
       } finally {
         setLoadingProducts(false);
       }
     };
 
-    fetchAvailableProducts();
-  }, []);
+    initBilling();
+  }, [id, isEditMode]);
 
   // Add selected product to cart
   const handleAddItem = () => {
@@ -161,14 +193,20 @@ const Billing = () => {
     };
 
     try {
-      const response = await axios.post('/api/invoices', invoicePayload);
-      toast.success('Invoice checked out and recorded successfully!');
+      let response;
+      if (isEditMode) {
+        response = await axios.put(`/api/invoices/${id}`, invoicePayload);
+        toast.success('Invoice updated successfully!');
+      } else {
+        response = await axios.post('/api/invoices', invoicePayload);
+        toast.success('Invoice checked out and recorded successfully!');
+      }
       
       // Redirect to invoice receipt screen
       navigate(`/invoices/${response.data._id}`);
     } catch (err) {
       console.error('Error during checkout:', err);
-      toast.error(err.response?.data?.message || 'Failed to checkout invoice');
+      toast.error(err.response?.data?.message || 'Failed to save invoice');
     } finally {
       setSubmitting(false);
     }
@@ -177,7 +215,22 @@ const Billing = () => {
   if (loadingProducts) return <Loader message="Setting up billing registers..." />;
 
   return (
-    <div className="row g-4">
+    <div className="d-flex flex-column gap-4">
+      {isEditMode && (
+        <div className="alert alert-warning border-0 shadow-sm rounded-4 p-3 d-flex align-items-center justify-content-between mb-0" style={{ zIndex: 1 }}>
+          <div className="d-flex align-items-center gap-2">
+            <span className="fs-4">✏️</span>
+            <div>
+              <h6 className="fw-bold mb-0">Invoice Edit Mode</h6>
+              <small className="text-muted">You are modifying invoice <strong>{invoiceNumber}</strong>. Product quantities and customer records will be automatically adjusted.</small>
+            </div>
+          </div>
+          <button onClick={() => navigate(`/invoices/${id}`)} className="btn btn-outline-dark btn-sm rounded-pill px-3 fw-medium">
+            Cancel Edit
+          </button>
+        </div>
+      )}
+      <div className="row g-4">
       {/* Product Selection & Customer Info Form */}
       <div className="col-12 col-xl-4">
         <div className="d-flex flex-column gap-4">
@@ -304,7 +357,7 @@ const Billing = () => {
                             </div>
                             <div className="d-flex justify-content-between align-items-center text-muted" style={{ fontSize: '0.75rem' }}>
                               <span>{p.brand} • {p.colour} • {p.size}</span>
-                              <span className="fw-bold text-primary">${p.sellingPrice.toFixed(2)}</span>
+                              <span className="fw-bold text-primary">₹{p.sellingPrice.toFixed(2)}</span>
                             </div>
                           </div>
                         );
@@ -370,7 +423,7 @@ const Billing = () => {
                               {item.brand} • {item.colour} • {item.size}
                             </div>
                           </td>
-                          <td>${item.sellingPrice.toFixed(2)}</td>
+                          <td>₹{item.sellingPrice.toFixed(2)}</td>
                           <td>
                             <div className="input-group input-group-sm" style={{ maxWidth: '110px' }}>
                               <input
@@ -386,7 +439,7 @@ const Billing = () => {
                               </span>
                             </div>
                           </td>
-                          <td className="fw-bold text-success">${(Number(item.total) || 0).toFixed(2)}</td>
+                          <td className="fw-bold text-success">₹{(Number(item.total) || 0).toFixed(2)}</td>
                           <td className="text-center">
                             <button
                               onClick={() => handleRemoveItem(item.product)}
@@ -426,7 +479,7 @@ const Billing = () => {
 
                       <div className="mobile-card-field">
                         <span className="mobile-card-label">Price</span>
-                        <span className="mobile-card-value">${item.sellingPrice.toFixed(2)}</span>
+                        <span className="mobile-card-value">₹{item.sellingPrice.toFixed(2)}</span>
                       </div>
 
                       <div className="mobile-card-field">
@@ -450,7 +503,7 @@ const Billing = () => {
 
                       <div className="mobile-card-field">
                         <span className="mobile-card-label">Total</span>
-                        <span className="mobile-card-value fw-bold text-success">${(Number(item.total) || 0).toFixed(2)}</span>
+                        <span className="mobile-card-value fw-bold text-success">₹{(Number(item.total) || 0).toFixed(2)}</span>
                       </div>
                     </div>
                   ))}
@@ -466,7 +519,7 @@ const Billing = () => {
                 <div className="col-12 col-md-5">
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <span className="text-muted small fw-medium">Subtotal Amount:</span>
-                    <span className="fw-bold text-dark">${subtotal.toFixed(2)}</span>
+                    <span className="fw-bold text-dark">₹{subtotal.toFixed(2)}</span>
                   </div>
 
                   <div className="d-flex align-items-center justify-content-between mb-2">
@@ -486,12 +539,12 @@ const Billing = () => {
 
                   <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                     <span className="text-muted small fw-medium">GST Amount:</span>
-                    <span className="fw-semibold text-muted">${gstAmount.toFixed(2)}</span>
+                    <span className="fw-semibold text-muted">₹{gstAmount.toFixed(2)}</span>
                   </div>
 
                   <div className="d-flex align-items-center justify-content-between">
                     <span className="h6 fw-bold mb-0">Grand Total:</span>
-                    <span className="h5 fw-bold text-success mb-0">${grandTotal.toFixed(2)}</span>
+                    <span className="h5 fw-bold text-success mb-0">₹{grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -512,12 +565,12 @@ const Billing = () => {
                   {submitting ? (
                     <>
                       <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                      Checking out...
+                      {isEditMode ? 'Saving Changes...' : 'Checking out...'}
                     </>
                   ) : (
                     <>
-                      <i className="bi bi-wallet2"></i>
-                      Checkout & Print Invoice
+                      <i className={isEditMode ? 'bi bi-check-circle-fill' : 'bi bi-wallet2'}></i>
+                      {isEditMode ? 'Update & Save Changes' : 'Checkout & Print Invoice'}
                     </>
                   )}
                 </button>
@@ -527,6 +580,7 @@ const Billing = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

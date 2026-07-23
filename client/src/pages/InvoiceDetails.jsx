@@ -55,6 +55,13 @@ const InvoiceDetails = () => {
           <h4 className="fw-bold mb-0 text-dark">Invoice Details</h4>
         </div>
         <div className="d-flex gap-2 w-100 w-sm-auto justify-content-end">
+          <Link
+            to={`/billing/edit/${invoice._id}`}
+            className="btn btn-warning rounded-pill px-3 px-sm-4 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 flex-grow-1 flex-sm-grow-0 text-dark"
+          >
+            <i className="bi bi-pencil-square"></i>
+            Edit Invoice
+          </Link>
           <button
             onClick={handlePrint}
             className="btn btn-primary rounded-pill px-3 px-sm-4 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 flex-grow-1 flex-sm-grow-0"
@@ -137,9 +144,9 @@ const InvoiceDetails = () => {
                     <div className="text-muted small">{item.brand} | Colour: {item.colour}</div>
                   </td>
                   <td className="text-center fw-semibold text-muted">{item.size}</td>
-                  <td className="text-center">${item.sellingPrice.toFixed(2)}</td>
+                  <td className="text-center">₹{item.sellingPrice.toFixed(2)}</td>
                   <td className="text-center fw-medium">{item.quantity}</td>
-                  <td className="text-end fw-bold text-dark pe-2">${item.total.toFixed(2)}</td>
+                  <td className="text-end fw-bold text-dark pe-2">₹{item.total.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -158,11 +165,11 @@ const InvoiceDetails = () => {
                     {item.brand} | Colour: {item.colour}
                   </div>
                   <div className="small text-secondary mt-1">
-                    Qty: <strong className="text-dark">{item.quantity}</strong> @ ${item.sellingPrice.toFixed(2)} ({item.size})
+                    Qty: <strong className="text-dark">{item.quantity}</strong> @ ₹{item.sellingPrice.toFixed(2)} ({item.size})
                   </div>
                 </div>
                 <div className="text-end fw-bold text-dark mt-1" style={{ fontSize: '0.95rem' }}>
-                  ${item.total.toFixed(2)}
+                  ₹{item.total.toFixed(2)}
                 </div>
               </div>
             </div>
@@ -174,17 +181,17 @@ const InvoiceDetails = () => {
           <div className="col-12 col-md-5">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <span className="text-muted small fw-medium">Subtotal:</span>
-              <span className="fw-semibold text-dark">${invoice.subtotal.toFixed(2)}</span>
+              <span className="fw-semibold text-dark">₹{invoice.subtotal.toFixed(2)}</span>
             </div>
             {invoice.gstPercent > 0 && (
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="text-muted small fw-medium">GST ({invoice.gstPercent}%):</span>
-                <span className="fw-semibold text-muted">${invoice.gstAmount.toFixed(2)}</span>
+                <span className="fw-semibold text-muted">₹{invoice.gstAmount.toFixed(2)}</span>
               </div>
             )}
             <div className="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
               <span className="h6 fw-bold text-dark mb-0">Grand Total:</span>
-              <span className="h5 fw-bold text-success mb-0">${invoice.grandTotal.toFixed(2)}</span>
+              <span className="h5 fw-bold text-success mb-0">₹{invoice.grandTotal.toFixed(2)}</span>
             </div>
           </div>
         </div>

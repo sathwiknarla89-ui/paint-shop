@@ -230,10 +230,10 @@ const Products = () => {
                       </td>
                       <td>
                         <div className="small text-muted">
-                          Buy: <span className="text-dark fw-medium">${product.buyingPrice.toFixed(2)}</span>
+                          Buy: <span className="text-dark fw-medium">₹{product.buyingPrice.toFixed(2)}</span>
                         </div>
                         <div className="small">
-                          Sell: <span className="text-success fw-bold">${product.sellingPrice.toFixed(2)}</span>
+                          Sell: <span className="text-success fw-bold">₹{product.sellingPrice.toFixed(2)}</span>
                         </div>
                       </td>
                       <td>
@@ -358,8 +358,8 @@ const Products = () => {
                   <div className="mobile-card-field">
                     <span className="mobile-card-label">Buying / Selling</span>
                     <span className="mobile-card-value">
-                      <span className="text-muted small">Buy:</span> <strong className="text-dark me-2">${product.buyingPrice.toFixed(2)}</strong>
-                      <span className="text-muted small">Sell:</span> <strong className="text-success">${product.sellingPrice.toFixed(2)}</strong>
+                      <span className="text-muted small">Buy:</span> <strong className="text-dark me-2">₹{product.buyingPrice.toFixed(2)}</strong>
+                      <span className="text-muted small">Sell:</span> <strong className="text-success">₹{product.sellingPrice.toFixed(2)}</strong>
                     </span>
                   </div>
 

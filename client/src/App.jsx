@@ -73,6 +73,7 @@ const AppLayout = () => {
             <Route path="/products/add" element={<AddEditProduct />} />
             <Route path="/products/edit/:id" element={<AddEditProduct />} />
             <Route path="/billing" element={<Billing />} />
+            <Route path="/billing/edit/:id" element={<Billing />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customers/:id" element={<CustomerDetails />} />
             <Route path="/sales" element={<SalesHistory />} />

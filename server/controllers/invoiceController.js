@@ -240,9 +240,196 @@ const deleteInvoice = async (req, res) => {
   }
 };
 
+// @desc    Update an invoice (recalculates billing, adjusts stock levels, updates customer history)
+// @route   PUT /api/invoices/:id
+// @access  Private
+const updateInvoice = async (req, res) => {
+  const {
+    customerName,
+    customerPhone,
+    products, // Array of { product: id, quantity: n, sellingPrice: p }
+    gstPercent,
+  } = req.body;
+
+  try {
+    // 1. Validation
+    if (!customerName || !products || products.length === 0) {
+      return res.status(400).json({ message: 'Please provide customer name and at least one product' });
+    }
+
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) {
+      return res.status(404).json({ message: 'Invoice not found' });
+    }
+
+    // 2. Temporarily restore stock levels of the old products
+    const oldProductsMap = new Map();
+    for (let oldItem of invoice.products) {
+      const dbProd = await Product.findById(oldItem.product);
+      if (dbProd) {
+        dbProd.quantity += oldItem.quantity;
+        await dbProd.save();
+        oldProductsMap.set(oldItem.product.toString(), dbProd);
+      }
+    }
+
+    // 3. Verify stock levels for the new products list
+    const itemsToBill = [];
+    let subtotal = 0;
+
+    for (let newItem of products) {
+      let dbProduct = oldProductsMap.get(newItem.product.toString());
+      if (!dbProduct) {
+        dbProduct = await Product.findById(newItem.product);
+      }
+
+      if (!dbProduct) {
+        // Revert the temporary stock restoration before erroring out
+        for (let oldItem of invoice.products) {
+          const dbProd = await Product.findById(oldItem.product);
+          if (dbProd) {
+            dbProd.quantity -= oldItem.quantity;
+            await dbProd.save();
+          }
+        }
+        return res.status(404).json({ message: `Product not found: ID ${newItem.product}` });
+      }
+
+      if (dbProduct.quantity < newItem.quantity) {
+        // Revert the temporary stock restoration before erroring out
+        for (let oldItem of invoice.products) {
+          const dbProd = await Product.findById(oldItem.product);
+          if (dbProd) {
+            dbProd.quantity -= oldItem.quantity;
+            await dbProd.save();
+          }
+        }
+        return res.status(400).json({
+          message: `Insufficient stock for ${dbProduct.name} (${dbProduct.size}). Available: ${dbProduct.quantity}, Requested: ${newItem.quantity}`,
+        });
+      }
+
+      const totalItemAmount = dbProduct.sellingPrice * newItem.quantity;
+      subtotal += totalItemAmount;
+
+      itemsToBill.push({
+        product: dbProduct._id,
+        name: dbProduct.name,
+        brand: dbProduct.brand,
+        colour: dbProduct.colour,
+        size: dbProduct.size,
+        quantity: newItem.quantity,
+        sellingPrice: dbProduct.sellingPrice,
+        total: totalItemAmount,
+        dbProductRef: dbProduct,
+      });
+    }
+
+    // Calculate Taxes & Totals
+    const gstRate = parseFloat(gstPercent) || 0;
+    const gstAmount = Math.round(((subtotal * gstRate) / 100) * 100) / 100;
+    const grandTotal = subtotal + gstAmount;
+
+    // 4. Commit new stock levels
+    for (let item of itemsToBill) {
+      item.dbProductRef.quantity -= item.quantity;
+      await item.dbProductRef.save();
+    }
+
+    // 5. Update Customer Metrics
+    const oldCustomerId = invoice.customer;
+    const normalizedPhone = customerPhone ? customerPhone.trim() : '';
+
+    let customer;
+    if (normalizedPhone) {
+      customer = await Customer.findOne({ phone: normalizedPhone });
+    }
+
+    if (!customer) {
+      customer = new Customer({
+        name: customerName.trim(),
+        phone: normalizedPhone,
+        totalPurchases: 0,
+        bills: [],
+      });
+      await customer.save();
+    }
+
+    const customerHasChanged = oldCustomerId.toString() !== customer._id.toString();
+
+    // Adjust old customer metrics
+    const oldCustomer = await Customer.findById(oldCustomerId);
+    if (oldCustomer) {
+      if (customerHasChanged) {
+        // Remove bill from old customer list
+        oldCustomer.bills = oldCustomer.bills.filter(
+          (billId) => billId.toString() !== invoice._id.toString()
+        );
+        oldCustomer.totalPurchases = Math.max(0, oldCustomer.totalPurchases - invoice.grandTotal);
+      } else {
+        // Adjust the spending difference
+        oldCustomer.totalPurchases = Math.max(0, oldCustomer.totalPurchases - invoice.grandTotal + grandTotal);
+        oldCustomer.name = customerName.trim();
+      }
+
+      // Re-evaluate last purchase date
+      if (oldCustomer.bills.length > 0) {
+        const remainingInvoices = await Invoice.find({
+          _id: { $in: oldCustomer.bills },
+        }).sort({ date: -1 });
+        oldCustomer.lastPurchaseDate = remainingInvoices.length > 0 ? remainingInvoices[0].date : null;
+      } else {
+        oldCustomer.lastPurchaseDate = null;
+      }
+      await oldCustomer.save();
+    }
+
+    // Adjust new customer metrics if changed
+    if (customerHasChanged) {
+      if (!customer.bills.some(b => b.toString() === invoice._id.toString())) {
+        customer.bills.push(invoice._id);
+      }
+      customer.totalPurchases += grandTotal;
+      // Re-evaluate last purchase date
+      const remainingInvoices = await Invoice.find({
+        _id: { $in: customer.bills },
+      }).sort({ date: -1 });
+      customer.lastPurchaseDate = remainingInvoices.length > 0 ? remainingInvoices[0].date : null;
+      customer.name = customerName.trim();
+      await customer.save();
+    }
+
+    // 6. Update the invoice record
+    invoice.customer = customer._id;
+    invoice.customerName = customerName.trim();
+    invoice.customerPhone = normalizedPhone;
+    invoice.products = itemsToBill.map((item) => ({
+      product: item.product,
+      name: item.name,
+      brand: item.brand,
+      colour: item.colour,
+      size: item.size,
+      quantity: item.quantity,
+      sellingPrice: item.sellingPrice,
+      total: item.total,
+    }));
+    invoice.subtotal = subtotal;
+    invoice.gstPercent = gstRate;
+    invoice.gstAmount = gstAmount;
+    invoice.grandTotal = grandTotal;
+
+    const updatedInvoice = await invoice.save();
+    res.json(updatedInvoice);
+  } catch (error) {
+    console.error('Invoice Update Error:', error.message);
+    res.status(500).json({ message: 'Server error updating transaction', error: error.message });
+  }
+};
+
 module.exports = {
   getInvoices,
   getInvoiceById,
   createInvoice,
   deleteInvoice,
+  updateInvoice,
 };

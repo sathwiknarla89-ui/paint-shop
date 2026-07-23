@@ -75,7 +75,7 @@ const SalesChart = ({ data = [] }) => {
                   textAnchor="end"
                   fontWeight="500"
                 >
-                  ${tick}
+                  ₹{tick}
                 </text>
               </g>
             );
@@ -120,7 +120,7 @@ const SalesChart = ({ data = [] }) => {
                     fontWeight="bold"
                     textAnchor="middle"
                   >
-                    ${Math.round(item.sales)}
+                    ₹{Math.round(item.sales)}
                   </text>
                 )}
 
