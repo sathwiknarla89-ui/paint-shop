@@ -57,13 +57,7 @@ const AppLayout = () => {
       )}
 
       {/* Sidebar Navigation */}
-      <div
-        className={`sidebar-container d-lg-block ${mobileSidebarOpen ? 'show' : ''}`}
-        style={{
-          position: 'relative',
-          zIndex: 999,
-        }}
-      >
+      <div className={`sidebar-container d-lg-block ${mobileSidebarOpen ? 'show' : ''}`}>
         <Sidebar closeSidebar={() => setMobileSidebarOpen(false)} />
       </div>
 

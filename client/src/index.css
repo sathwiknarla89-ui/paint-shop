@@ -36,6 +36,11 @@ body {
   background: #a8a8a8;
 }
 
+.sidebar-container {
+  position: relative;
+  z-index: 999;
+}
+
 /* Sidebar Styling */
 .sidebar-wrapper {
   background-color: var(--sidebar-bg);
