@@ -25,6 +25,13 @@ const seedData = async () => {
     });
     console.log(`Admin user created: username: "admin", password: "admin123"`);
 
+    console.log('Seeding sathwik user...');
+    const sathwikUser = await User.create({
+      username: 'sathwik',
+      password: 'sathwik@123',
+    });
+    console.log(`Sathwik user created: username: "sathwik", password: "sathwik@123"`);
+
 
     console.log('Database seeding successfully finished!');
     process.exit(0);
