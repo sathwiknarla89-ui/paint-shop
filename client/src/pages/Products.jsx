@@ -14,7 +14,6 @@ const Products = () => {
   
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState('');
-  const [lowStockFilter, setLowStockFilter] = useState(false);
   
   // Inline edit state
   const [editingId, setEditingId] = useState(null);
@@ -32,7 +31,6 @@ const Products = () => {
           page,
           limit: 10,
           search: searchTerm,
-          lowStock: lowStockFilter,
         },
       });
       setProducts(response.data.products);
@@ -50,11 +48,11 @@ const Products = () => {
   useEffect(() => {
     // Reset page to 1 when search or filter changes to avoid empty pages
     setPage(1);
-  }, [searchTerm, lowStockFilter]);
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchProducts();
-  }, [page, searchTerm, lowStockFilter]);
+  }, [page, searchTerm]);
 
   // Handle deletion confirmation
   const handleDeleteClick = (product) => {
@@ -124,7 +122,7 @@ const Products = () => {
           </div>
           
           {/* Search Box */}
-          <div className="col-12 col-md-5">
+          <div className="col-12 col-md-9">
             <div className="input-group">
               <span className="input-group-text bg-light border-end-0 rounded-start-pill ps-3">
                 <i className="bi bi-search text-muted"></i>
@@ -136,24 +134,6 @@ const Products = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="col-12 col-md-4 d-flex justify-content-md-end align-items-center">
-            <div className="form-check form-switch bg-light rounded-pill px-4 py-2 border shadow-sm">
-              <input
-                className="form-check-input ms-0 me-2"
-                type="checkbox"
-                role="switch"
-                id="lowStockSwitch"
-                checked={lowStockFilter}
-                onChange={(e) => setLowStockFilter(e.target.checked)}
-              />
-              <label className="form-check-label small fw-semibold text-danger" htmlFor="lowStockSwitch">
-                <i className="bi bi-exclamation-triangle-fill me-1"></i>
-                Low Stock Only (&lt; 10)
-              </label>
             </div>
           </div>
         </div>
@@ -168,12 +148,12 @@ const Products = () => {
             <i className="bi bi-folder-x fs-1 text-muted"></i>
             <h5 className="fw-bold text-dark mt-3">No Products Found</h5>
             <p className="text-muted small">Try modifying your search criteria or register a new product.</p>
-            {searchTerm || lowStockFilter ? (
+            {searchTerm ? (
               <button
                 className="btn btn-outline-primary btn-sm rounded-pill px-4 mt-2"
-                onClick={() => { setSearchTerm(''); setLowStockFilter(false); }}
+                onClick={() => setSearchTerm('')}
               >
-                Clear Filters
+                Clear Search
               </button>
             ) : null}
           </div>
