@@ -11,11 +11,8 @@ const seedData = async () => {
     // Connect to database
     await connectDB();
 
-    console.log('Clearing database collections...');
+    console.log('Ensuring user accounts exist...');
     await User.deleteMany({});
-    await Product.deleteMany({});
-    await Customer.deleteMany({});
-    await Invoice.deleteMany({});
 
     console.log('Seeding admin user...');
     // The User model schema pre-save hook will automatically hash this password
